@@ -8,7 +8,7 @@ namespace Spdy.Logging
     {
         internal static string GetPrettyName(this Type type)
         {
-            var name = type?.FullName;
+            var name = type.FullName;
 
             if (name == null)
             {
