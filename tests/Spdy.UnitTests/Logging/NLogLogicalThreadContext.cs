@@ -12,9 +12,9 @@ namespace Spdy.UnitTests.Logging
             MappedDiagnosticsLogicalContext.Set(key, value);
         }
 
-        public TValue? Get<TValue>(
+        public TValue Get<TValue>(
             string key)
-            => (TValue?) MappedDiagnosticsLogicalContext.GetObject(key);
+            => (TValue) MappedDiagnosticsLogicalContext.GetObject(key);
         
         public void Remove(
             string key)
