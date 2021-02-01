@@ -15,6 +15,6 @@
         internal Metrics.Metrics Metrics { get; }
 
         public static Configuration Default
-            => new Configuration(Ping.Default, Spdy.Configuration.Metrics.Metrics.Default);
+            => new(Ping.Default, Spdy.Configuration.Metrics.Metrics.Default);
     }
 }

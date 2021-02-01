@@ -54,7 +54,7 @@ namespace Spdy.Frames
         public static WindowUpdate ConnectionFlowControl(
             UInt31 deltaWindowSize)
         {
-            return new WindowUpdate(ConnectionFlowId, deltaWindowSize);
+            return new(ConnectionFlowId, deltaWindowSize);
         }
 
         public const ushort Type = 9;

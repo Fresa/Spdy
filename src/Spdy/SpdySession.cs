@@ -34,13 +34,13 @@ namespace Spdy
         private readonly SemaphoreSlimGate _sendingGate =
             SemaphoreSlimGate.OneAtATime;
 
-        private readonly Pipe _messageReceiver = new Pipe(new PipeOptions(useSynchronizationContext: false));
+        private readonly Pipe _messageReceiver = new(new PipeOptions(useSynchronizationContext: false));
 
         private readonly CancellationTokenSource
             _sendingCancellationTokenSource;
 
         private readonly CancellationTokenSource
-            _sessionCancellationTokenSource = new CancellationTokenSource();
+            _sessionCancellationTokenSource = new();
 
         private CancellationToken SessionCancellationToken
             => _sessionCancellationTokenSource.Token;
@@ -51,21 +51,20 @@ namespace Spdy
         private readonly Task _sendPingTask;
 
         private readonly ConcurrentPriorityQueue<Frame> _sendingPriorityQueue =
-            new ConcurrentPriorityQueue<Frame>();
+            new();
 
         private UInt31 _nextStreamId;
         private UInt31 _lastGoodStreamId;
 
-        private readonly BufferBlock<SpdyStream> _receivedStreamRequests = new BufferBlock<SpdyStream>();
+        private readonly BufferBlock<SpdyStream> _receivedStreamRequests = new();
 
         private readonly ConcurrentDictionary<UInt31, SpdyStream> _streams =
-            new ConcurrentDictionary<UInt31, SpdyStream>();
+            new();
 
         private readonly
             ObservableConcurrentDictionary<Settings.Id, Settings.Setting>
             _settings =
-                new ObservableConcurrentDictionary<Settings.Id, Settings.Setting
-                >();
+                new();
 
         public IObservableReadOnlyCollection<Settings.Setting> Settings
             => _settings;
@@ -103,7 +102,7 @@ namespace Spdy
             INetworkClient networkClient,
             Configuration.Configuration? configuration = default)
         {
-            return new SpdySession(
+            return new(
                 networkClient, true, configuration ?? Configuration.Configuration.Default);
         }
 
@@ -111,7 +110,7 @@ namespace Spdy
             INetworkClient networkClient,
             Configuration.Configuration? configuration = default)
         {
-            return new SpdySession(
+            return new(
                 networkClient, false, configuration ?? Configuration.Configuration.Default);
         }
 
@@ -243,7 +242,7 @@ namespace Spdy
         }
 
         private readonly Signaler
-            _windowSizeIncreased = new Signaler();
+            _windowSizeIncreased = new();
 
         private void TryIncreaseWindowSizeOrCloseSession(
             int delta)
@@ -274,7 +273,7 @@ namespace Spdy
             }
         }
 
-        private readonly ConcurrentDictionary<UInt31, Stopwatch> _pingsSent = new ConcurrentDictionary<UInt31, Stopwatch>();
+        private readonly ConcurrentDictionary<UInt31, Stopwatch> _pingsSent = new();
         private async Task SendPingsAsync(CancellationToken cancellationToken)
         {
             if (_configuration.Ping.MaxOutstandingPings == 0)

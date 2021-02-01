@@ -10,14 +10,14 @@ namespace Spdy.Frames.Writers
 {
     internal sealed class HeaderWriterProvider : IHeaderWriterProvider, IAsyncDisposable
     {
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
         private readonly ValueTask _backgroundTask;
-        private readonly ZlibCodec _zlibCodec = new ZlibCodec();
+        private readonly ZlibCodec _zlibCodec = new();
 
         private CancellationToken CancellationToken
             => _cancellationTokenSource.Token;
 
-        private readonly BufferBlock<(PipeReader OutputReader, PipeWriter OutputWriter, bool last)> _requestQueue = new BufferBlock<(PipeReader OutputReader, PipeWriter OutputWriter, bool last)>();
+        private readonly BufferBlock<(PipeReader OutputReader, PipeWriter OutputWriter, bool last)> _requestQueue = new();
 
         public HeaderWriterProvider()
         {

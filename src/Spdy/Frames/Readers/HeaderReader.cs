@@ -14,13 +14,13 @@ namespace Spdy.Frames.Readers
     {
         private readonly IFrameReader _frameReader;
         private readonly byte[] _dictionary = SpdyConstants.HeadersDictionary;
-        private readonly Pipe _pipe = new Pipe();
+        private readonly Pipe _pipe = new();
         private readonly FrameReader _headerReader;
-        private readonly ZlibCodec _zlibCodec = new ZlibCodec();
+        private readonly ZlibCodec _zlibCodec = new();
         private readonly ILogger _logger = LogFactory.Create<HeaderReader>();
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
         private readonly ValueTask _backgroundTask;
-        private readonly BufferBlock<int> _requestQueue = new BufferBlock<int>();
+        private readonly BufferBlock<int> _requestQueue = new();
 
         private CancellationToken CancellationToken
             => _cancellationTokenSource.Token;

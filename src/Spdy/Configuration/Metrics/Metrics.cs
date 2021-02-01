@@ -8,6 +8,6 @@
 
         internal PingRoundTripTime PingRoundTripTime { get; }
 
-        public static Metrics Default => new Metrics(PingRoundTripTime.Default);
+        public static Metrics Default => new(PingRoundTripTime.Default);
     }
 }

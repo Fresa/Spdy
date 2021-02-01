@@ -21,7 +21,7 @@ namespace Spdy.Configuration
         internal TimeSpan PingInterval { get; }
         internal int MaxOutstandingPings { get; }
 
-        public static Ping Disabled => new Ping(Timeout.InfiniteTimeSpan, 0);
-        public static Ping Default => new Ping(TimeSpan.FromSeconds(5), 10);
+        public static Ping Disabled => new(Timeout.InfiniteTimeSpan, 0);
+        public static Ping Default => new(TimeSpan.FromSeconds(5), 10);
     }
 }

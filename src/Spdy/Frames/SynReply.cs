@@ -51,14 +51,14 @@ namespace Spdy.Frames
             UInt31 streamId,
             NameValueHeaderBlock? headers = null)
         {
-            return new SynReply(Options.Fin, streamId, headers);
+            return new(Options.Fin, streamId, headers);
         }
 
         public static SynReply Accept(
             UInt31 streamId,
             NameValueHeaderBlock? headers = null)
         {
-            return new SynReply(Options.None, streamId, headers);
+            return new(Options.None, streamId, headers);
         }
 
         public const ushort Type = 2;

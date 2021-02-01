@@ -49,7 +49,7 @@ namespace Spdy.Frames.Readers
         }
 
         public static implicit operator ReadResult<Frame>(ReadResult<T> stream) =>
-            new ReadResult<Frame>(
+            new(
                 stream._result != null ? 
                     stream._result as Frame : 
                     stream._error ?? throw new NullReferenceException());
@@ -57,13 +57,13 @@ namespace Spdy.Frames.Readers
         public static ReadResult<T> Error(
             RstStream error)
         {
-            return new ReadResult<T>(error);
+            return new(error);
         }
 
         public static ReadResult<T> Ok(
             T result)
         {
-            return new ReadResult<T>(result);
+            return new(result);
         }
     }
 

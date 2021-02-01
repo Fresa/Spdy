@@ -62,7 +62,7 @@ namespace Spdy.Frames
             UInt31 streamId,
             NameValueHeaderBlock values)
         {
-            return new Headers(Options.Fin, streamId, values);
+            return new(Options.Fin, streamId, values);
         }
 
         public const ushort Type = 8;

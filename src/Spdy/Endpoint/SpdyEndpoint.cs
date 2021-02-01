@@ -14,7 +14,7 @@ namespace Spdy.Endpoint
                                         builder.Then(EndpointState.Closed))
                                 .Build();
 
-        private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationSource = new();
 
         internal CancellationToken Cancellation { get; }
 

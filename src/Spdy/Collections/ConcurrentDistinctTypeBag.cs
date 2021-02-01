@@ -5,7 +5,7 @@ namespace Spdy.Collections
 {
     internal sealed class ConcurrentDistinctTypeBag
     {
-        private readonly ConcurrentDictionary<Type, Type> _types = new ConcurrentDictionary<Type, Type>();
+        private readonly ConcurrentDictionary<Type, Type> _types = new();
 
         internal bool TryAdd<T>()
         {

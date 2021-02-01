@@ -12,7 +12,7 @@ namespace Spdy.Configuration.Metrics
 
         internal Action<TimeSpan> Observe { get; }
 
-        public static PingRoundTripTime Default => new PingRoundTripTime(
+        public static PingRoundTripTime Default => new(
             observedLatency => { });
     }
 }

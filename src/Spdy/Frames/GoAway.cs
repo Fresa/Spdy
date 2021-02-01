@@ -51,15 +51,15 @@ namespace Spdy.Frames
 
         public static GoAway Ok(
             UInt31 lastGoodStreamId)
-            => new GoAway(lastGoodStreamId, StatusCode.Ok);
+            => new(lastGoodStreamId, StatusCode.Ok);
 
         public static GoAway ProtocolError(
             UInt31 lastGoodStreamId)
-            => new GoAway(lastGoodStreamId, StatusCode.ProtocolError);
+            => new(lastGoodStreamId, StatusCode.ProtocolError);
 
         public static GoAway InternalError(
             UInt31 lastGoodStreamId)
-            => new GoAway(lastGoodStreamId, StatusCode.InternalError);
+            => new(lastGoodStreamId, StatusCode.InternalError);
 
         public const ushort Type = 7;
 
