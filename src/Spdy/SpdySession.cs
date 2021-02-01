@@ -101,18 +101,14 @@ namespace Spdy
         public static SpdySession CreateClient(
             INetworkClient networkClient,
             Configuration.Configuration? configuration = default)
-        {
-            return new(
-                networkClient, true, configuration ?? Configuration.Configuration.Default);
-        }
+            => new(
+                networkClient, true, configuration ?? new Configuration.Configuration());
 
         public static SpdySession CreateServer(
             INetworkClient networkClient,
             Configuration.Configuration? configuration = default)
-        {
-            return new(
-                networkClient, false, configuration ?? Configuration.Configuration.Default);
-        }
+            => new(
+                networkClient, false, configuration ?? new Configuration.Configuration());
 
         private Task StartBackgroundTaskAsync(
             Func<CancellationToken, Task> action,

@@ -22,7 +22,7 @@ namespace Spdy.IntegrationTests
             => CancellationTokenSource.Token;
 
         protected virtual Configuration.Configuration SpdySessionConfiguration
-            => Configuration.Configuration.Default;
+            => new();
 
         internal SubscriptionCollection<Frame> Subscriptions { get; } =
             new SubscriptionCollection<Frame>();

@@ -469,9 +469,10 @@ namespace Spdy.IntegrationTests
             }
 
             protected override Configuration.Configuration SpdySessionConfiguration { get; } =
-                new(
-                    Configuration.Ping.Disabled,
-                    Metrics.Default);
+                new()
+                {
+                    Ping = Configuration.Ping.Disabled
+                };
 
             protected override async Task GivenASessionAsync(
                 CancellationToken cancellationToken)

@@ -6,22 +6,19 @@ namespace Spdy.Configuration
     public sealed class Ping
     {
         /// <summary>
-        /// Ping configuration
+        /// The interval between pings
         /// </summary>
-        /// <param name="pingInterval">The interval between pings</param>
-        /// <param name="maxOutstandingPings">Maximum number of unacknowledged outstanding pings</param>
-        public Ping(
-            TimeSpan pingInterval,
-            int maxOutstandingPings)
+        public TimeSpan PingInterval { get; init; } = TimeSpan.FromSeconds(5);
+
+        /// <summary>
+        /// Maximum number of unacknowledged outstanding pings
+        /// </summary>
+        public int MaxOutstandingPings { get; init; } = 10;
+
+        public static Ping Disabled => new()
         {
-            PingInterval = pingInterval;
-            MaxOutstandingPings = maxOutstandingPings;
-        }
-
-        internal TimeSpan PingInterval { get; }
-        internal int MaxOutstandingPings { get; }
-
-        public static Ping Disabled => new(Timeout.InfiniteTimeSpan, 0);
-        public static Ping Default => new(TimeSpan.FromSeconds(5), 10);
+            MaxOutstandingPings = 0,
+            PingInterval = Timeout.InfiniteTimeSpan
+        };
     }
 }

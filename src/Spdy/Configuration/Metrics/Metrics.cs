@@ -2,12 +2,9 @@
 {
     public sealed class Metrics
     {
-        public Metrics(
-            PingRoundTripTime pingRoundTripTime)
-            => PingRoundTripTime = pingRoundTripTime;
-
-        internal PingRoundTripTime PingRoundTripTime { get; }
-
-        public static Metrics Default => new(PingRoundTripTime.Default);
+        /// <summary>
+        /// Measures ping round trip
+        /// </summary>
+        public PingRoundTripTime PingRoundTripTime { get; init; } = new();
     }
 }
