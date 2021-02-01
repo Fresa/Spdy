@@ -74,7 +74,7 @@ namespace Spdy.Frames.Writers
                         .ConfigureAwait(false);
                     try
                     {
-                        System.IO.Pipelines.ReadResult inputBuffer;
+                        ReadResult inputBuffer;
                         do
                         {
                             inputBuffer = await inputReader

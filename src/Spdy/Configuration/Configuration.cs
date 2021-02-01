@@ -1,9 +1,9 @@
 ﻿namespace Spdy.Configuration
 {
-    public sealed class Configuration
+    public sealed record Configuration
     {
-        internal Ping Ping { get; init; } = new();
+        public Ping Ping { get; init; } = new();
 
-        internal Metrics.Metrics Metrics { get; init; } = new();
+        public Metrics.Metrics Metrics { get; init; } = new();
     }
 }

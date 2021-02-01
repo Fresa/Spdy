@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Spdy.Configuration
 {
-    public sealed class Ping
+    public sealed record Ping
     {
         /// <summary>
         /// The interval between pings

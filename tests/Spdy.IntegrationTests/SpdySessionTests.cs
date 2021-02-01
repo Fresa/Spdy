@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Spdy.Collections;
-using Spdy.Configuration.Metrics;
 using Spdy.Extensions;
 using Spdy.Frames;
 using Spdy.IntegrationTests.Extensions;
@@ -19,9 +18,9 @@ using ReadResult = System.IO.Pipelines.ReadResult;
 
 namespace Spdy.IntegrationTests
 {
-    public partial class Given_a_connected_spdy_session
+    public class Given_a_connected_spdy_session
     {
-        public partial class
+        public class
             When_opening_a_stream : SpdyClientSessionTestSpecification
         {
             private SynStream _synStream = null!;
@@ -71,7 +70,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_sending_data : SpdyClientSessionTestSpecification
         {
             private Data _dataSent = null!;
@@ -124,7 +123,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_sending_headers : SpdyClientSessionTestSpecification
         {
             private Headers _headersSent = null!;
@@ -182,7 +181,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_receiving_data : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -256,7 +255,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_accepting_a_stream_multiple_times : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -325,7 +324,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_receiving_a_window_update_that_exceeds_maximum_window_size : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -394,7 +393,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_receiving_headers : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -456,7 +455,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_receiving_ping : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -514,9 +513,9 @@ namespace Spdy.IntegrationTests
         }
     }
 
-    public partial class Given_an_spdy_client_session
+    public class Given_an_spdy_client_session
     {
-        public partial class
+        public class
             When_connecting : SpdyClientSessionTestSpecification
         {
             private Ping _pingReceived = default!;
@@ -546,7 +545,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_receiving_rst : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -602,9 +601,9 @@ namespace Spdy.IntegrationTests
         }
     }
 
-    public partial class Given_an_opened_spdy_session
+    public class Given_an_opened_spdy_session
     {
-        public partial class
+        public class
             When_receiving_settings : SpdyClientSessionTestSpecification
         {
             private IEnumerable<Settings.Setting> _settingsReceived = new List<Settings.Setting>();
@@ -648,7 +647,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_sending_more_data_than_the_window_allows : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = default!;
@@ -735,9 +734,9 @@ namespace Spdy.IntegrationTests
         }
     }
 
-    public partial class Given_a_unidirectional_spdy_session
+    public class Given_a_unidirectional_spdy_session
     {
-        public partial class
+        public class
             When_receiving_data : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = default!;
@@ -808,9 +807,9 @@ namespace Spdy.IntegrationTests
         }
     }
 
-    public partial class Given_a_closed_spdy_session
+    public class Given_a_closed_spdy_session
     {
-        public partial class
+        public class
             When_receiving_data : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = default!;

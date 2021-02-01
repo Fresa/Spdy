@@ -79,7 +79,7 @@ namespace Spdy.UnitTests
                                      .ConfigureAwait(false);
             }
 
-            await base.DisposeAsync(disposing)
+            await base.DisposeAsync(true)
                       .ConfigureAwait(false);
         }
     }

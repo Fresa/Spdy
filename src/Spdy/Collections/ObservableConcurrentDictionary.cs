@@ -10,8 +10,8 @@ namespace Spdy.Collections
         where TKey : notnull
     {
         public event NotifyDictionaryUpdatedHandler<TKey, TValue> Updated = (
-            key,
-            value) =>
+            _,
+            _) =>
         {
         };
 
@@ -42,7 +42,7 @@ namespace Spdy.Collections
 
         IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator() => Values.GetEnumerator();
 
-        private event NotifyCollectionUpdatedHandler<TValue> UpdatedValue = item => {};
+        private event NotifyCollectionUpdatedHandler<TValue> UpdatedValue = _ => {};
         event NotifyCollectionUpdatedHandler<TValue>
             IObservableReadOnlyCollection<TValue>.Updated
             {

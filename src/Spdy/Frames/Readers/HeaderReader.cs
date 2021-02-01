@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using Ionic.Zlib;
 using Spdy.Extensions;
-using Spdy.Logging;
 using Spdy.Primitives;
 
 namespace Spdy.Frames.Readers

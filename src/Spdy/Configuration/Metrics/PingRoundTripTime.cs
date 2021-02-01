@@ -2,7 +2,7 @@
 
 namespace Spdy.Configuration.Metrics
 {
-    public sealed class PingRoundTripTime
+    public sealed record PingRoundTripTime
     {
         public Action<TimeSpan> Observe { get; init; } = _ => { };
     }

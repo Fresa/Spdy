@@ -1,6 +1,6 @@
 ﻿namespace Spdy.Configuration.Metrics
 {
-    public sealed class Metrics
+    public sealed record Metrics
     {
         /// <summary>
         /// Measures ping round trip

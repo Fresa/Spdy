@@ -481,7 +481,7 @@ namespace Spdy
             }
         }
 
-        public async Task<System.IO.Pipelines.ReadResult> ReceiveAsync(
+        public async Task<ReadResult> ReceiveAsync(
             TimeSpan timeout = default,
             CancellationToken cancellationToken = default)
         {
@@ -509,7 +509,7 @@ namespace Spdy
                         Send(new WindowUpdate(Id, (uint)frame.Payload.Length));
                     }
 
-                    return new System.IO.Pipelines.ReadResult(
+                    return new ReadResult(
                         new ReadOnlySequence<byte>(frame.Payload), false,
                         frame.IsLastFrame);
                 }
@@ -535,7 +535,7 @@ namespace Spdy
                     // not been consumed before cancelling.
                     if (_receivingQueue.IsEmpty)
                     {
-                        return new System.IO.Pipelines.ReadResult(
+                        return new ReadResult(
                             ReadOnlySequence<byte>.Empty, true, false);
                     }
                 }
