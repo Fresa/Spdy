@@ -11,7 +11,7 @@ namespace Spdy.IntegrationTests.SocketTestFramework
     {
         private readonly ConcurrentDictionary<string, BufferBlock<INetworkClient>>
             _networkServers
-                = new ConcurrentDictionary<string, BufferBlock<INetworkClient>>();
+                = new();
         
         internal BufferBlock<INetworkClient> Get(
             IPAddress address,

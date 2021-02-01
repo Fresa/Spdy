@@ -7,7 +7,7 @@ namespace Spdy.UnitTests.Observability
     public static class NLogBuilderExtensions
     {
         private static readonly ExclusiveLock NlogConfigurationLock =
-            new ExclusiveLock();
+            new();
 
         public static void ConfigureNLogOnce(
             IConfiguration configuration)

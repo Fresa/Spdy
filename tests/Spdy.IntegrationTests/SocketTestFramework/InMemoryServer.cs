@@ -9,7 +9,7 @@ namespace Spdy.IntegrationTests.SocketTestFramework
     internal class InMemoryServer : INetworkServer
     {
         private readonly ConcurrentQueue<INetworkClient> _clients =
-            new ConcurrentQueue<INetworkClient>();
+            new();
 
         private readonly BufferBlock<INetworkClient> _waitingClients;
 

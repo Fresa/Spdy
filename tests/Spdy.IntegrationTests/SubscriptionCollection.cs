@@ -6,7 +6,7 @@ namespace Spdy.IntegrationTests
 {
     internal sealed class SubscriptionCollection<TBase> where TBase : class
     {
-        private readonly Dictionary<Type, object> _items = new Dictionary<Type, object>();
+        private readonly Dictionary<Type, object> _items = new();
 
         internal void Add<T>(
             ISubscription<T> item) where T : TBase

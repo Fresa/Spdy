@@ -16,13 +16,13 @@ namespace Spdy.IntegrationTests
         private readonly INetworkClient _networkClient;
 
         private readonly CancellationTokenSource _cancellationTokenSource =
-            new CancellationTokenSource();
+            new();
 
         private CancellationToken ReceiverCancellationToken
             => _cancellationTokenSource.Token;
 
         private Task _receiverTask = Task.CompletedTask;
-        private readonly Pipe _pipe = new Pipe(new PipeOptions(useSynchronizationContext: false));
+        private readonly Pipe _pipe = new(new PipeOptions(useSynchronizationContext: false));
         private readonly FrameReader _frameReader;
         private readonly FrameWriter _frameWriter;
         private readonly HeaderWriterProvider _headerWriterProvider;

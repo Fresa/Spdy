@@ -186,8 +186,8 @@ namespace Spdy.IntegrationTests
             When_receiving_data : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
-            private readonly List<byte> _dataReceived = new List<byte>();
-            private readonly List<WindowUpdate> _flowControlMessages = new List<WindowUpdate>();
+            private readonly List<byte> _dataReceived = new();
+            private readonly List<WindowUpdate> _flowControlMessages = new();
 
             public When_receiving_data(
                 ITestOutputHelper testOutputHelper)

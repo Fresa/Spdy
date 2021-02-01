@@ -9,7 +9,7 @@ namespace Spdy.IntegrationTests.SocketTestFramework
     internal sealed class InMemorySocketTestFramework : SocketTestFramework
     {
         private readonly InMemoryNetworkServerFactory _networkServerFactory =
-            new InMemoryNetworkServerFactory();
+            new();
         public INetworkServerFactory NetworkServerFactory
             => _networkServerFactory;
 

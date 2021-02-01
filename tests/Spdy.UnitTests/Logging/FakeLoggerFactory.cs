@@ -4,7 +4,7 @@ namespace Spdy.UnitTests.Logging
 {
     internal class FakeLoggerFactory
     {
-        private static readonly object InitializationLock = new object();
+        private static readonly object InitializationLock = new();
 
         internal static ILogFactory Create()
         {
