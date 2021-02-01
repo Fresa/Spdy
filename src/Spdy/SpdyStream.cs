@@ -433,7 +433,9 @@ namespace Spdy
         public Task<FlushResult> SendHeadersAsync(
             NameValueHeaderBlock headers,
             Headers.Options options = Frames.Headers.Options.None,
+            // ReSharper disable once UnusedParameter.Global Public API
             TimeSpan timeout = default,
+            // ReSharper disable once UnusedParameter.Global Public API
             CancellationToken cancellationToken = default)
         {
             if (Local.IsClosed)

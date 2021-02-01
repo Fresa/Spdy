@@ -17,9 +17,8 @@ namespace Spdy.Frames.Readers
         private readonly Pipe _pipe = new();
         private readonly FrameReader _headerReader;
         private readonly ZlibCodec _zlibCodec = new();
-        private readonly ILogger _logger = LogFactory.Create<HeaderReader>();
         private readonly CancellationTokenSource _cancellationTokenSource = new();
-        private readonly ValueTask _backgroundTask;
+        private readonly Task _backgroundTask;
         private readonly BufferBlock<int> _requestQueue = new();
 
         private CancellationToken CancellationToken
@@ -48,14 +47,14 @@ namespace Spdy.Frames.Readers
                 if (_backgroundTask.IsFaulted)
                 {
                     task.SetException(
-                        _backgroundTask.AsTask()
-                                       .Exception ?? new Exception("Unknown error"));
+                        _backgroundTask
+                            .Exception ?? new Exception("Unknown error"));
                     return;
                 }
 
                 if (valueTask.IsCanceled)
                 {
-                    task.SetCanceled();
+                    task.SetCanceled(CancellationToken);
                     return;
                 }
 
@@ -73,7 +72,7 @@ namespace Spdy.Frames.Readers
                     return;
                 }
 
-                task.SetCanceled();
+                task.SetCanceled(CancellationToken);
             }
             catch (Exception e)
             {
@@ -185,7 +184,7 @@ namespace Spdy.Frames.Readers
             return this;
         }
 
-        private async ValueTask RunZlibDecompress()
+        private async Task RunZlibDecompress()
         {
             var result = _zlibCodec.InitializeInflate();
             if (result < 0)
