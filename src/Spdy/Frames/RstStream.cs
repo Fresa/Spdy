@@ -145,7 +145,7 @@ namespace Spdy.Frames
         /// </summary>
         private new Options Flags
         {
-            set => base.Flags = (byte)value;
+            init => base.Flags = (byte)value;
         }
 
         [Flags]
@@ -160,9 +160,9 @@ namespace Spdy.Frames
         public UInt24 Length
         {
             get => UInt24.From(8);
-            private set
+            private init
             {
-                if (value.Value != 8)
+                if (value.Value is not 8)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(Length), "Length can only be 8");

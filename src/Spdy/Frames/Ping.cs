@@ -61,7 +61,7 @@ namespace Spdy.Frames
             get => UInt24.From(4);
             private set
             {
-                if (value.Value != 4)
+                if (value.Value is not 4)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(Length), "Length can only be 4");

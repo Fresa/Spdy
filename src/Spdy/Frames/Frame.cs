@@ -21,7 +21,7 @@ namespace Spdy.Frames
                 var firstByte = await frameReader.PeekByteAsync(cancellation)
                                                  .ConfigureAwait(false);
                 Logger.Trace("Started reading frame");
-                var isControlFrame = (firstByte & 0x80) != 0;
+                var isControlFrame = (firstByte & 0x80) is not 0;
                 if (isControlFrame)
                 {
                     return await Control.TryReadAsync(frameReader, headerReader, cancellation)

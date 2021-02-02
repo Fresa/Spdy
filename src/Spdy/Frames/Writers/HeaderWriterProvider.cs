@@ -145,7 +145,7 @@ namespace Spdy.Frames.Writers
                         $"Got error code {result} when deflating the stream: {_zlibCodec.Message}");
                 }
 
-                if (flushType == FlushType.Finish && result != ZlibConstants.Z_STREAM_END)
+                if (flushType == FlushType.Finish && result is not ZlibConstants.Z_STREAM_END)
                 {
                     throw new InvalidOperationException($"Expected END, got {result}");
                 }

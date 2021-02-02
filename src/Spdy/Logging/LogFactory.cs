@@ -10,7 +10,7 @@ namespace Spdy.Logging
         {
             lock (_factory)
             {
-                if (_factory.GetType() != typeof(NoopLogFactory))
+                if (_factory is not NoopLogFactory)
                 {
                     return false;
                 }

@@ -85,7 +85,7 @@ namespace Spdy.IntegrationTests.SocketTestFramework
                     currentExceptions,
                     task) =>
                 {
-                    if (task.Exception != null)
+                    if (task.Exception is not null)
                     {
                         currentExceptions.AddRange(
                             task.Exception.InnerExceptions);

@@ -64,7 +64,7 @@ namespace Spdy.Frames
         /// </summary>
         private new Options Flags
         {
-            set => base.Flags = (byte) value;
+            init => base.Flags = (byte) value;
         }
 
         [Flags]
@@ -78,7 +78,7 @@ namespace Spdy.Frames
             get => UInt24.From(8);
             set
             {
-                if (value.Value != 8)
+                if (value.Value is not 8)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(Length), $"Length can only be 8, was {value}");
@@ -102,7 +102,7 @@ namespace Spdy.Frames
         public UInt31 DeltaWindowSize
         {
             get => _deltaWindowSize;
-            private set
+            private init
             {
                 if (value < 1)
                 {

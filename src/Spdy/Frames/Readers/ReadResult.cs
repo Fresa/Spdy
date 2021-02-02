@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Spdy.Frames.Readers
 {
-    public readonly struct ReadResult<T>
+    internal readonly struct ReadResult<T>
         where T : Frame
     {
         private readonly T? _result;
@@ -50,7 +50,7 @@ namespace Spdy.Frames.Readers
 
         public static implicit operator ReadResult<Frame>(ReadResult<T> stream) =>
             new(
-                stream._result != null ? 
+                stream._result is not null ? 
                     stream._result as Frame : 
                     stream._error ?? throw new NullReferenceException());
 
@@ -67,7 +67,7 @@ namespace Spdy.Frames.Readers
         }
     }
 
-    public static class ReadResult
+    internal static class ReadResult
     {
         public static ReadResult<T> Ok<T>(
             T result) where T : Control
