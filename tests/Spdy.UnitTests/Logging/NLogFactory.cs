@@ -2,7 +2,7 @@
 
 namespace Spdy.UnitTests.Logging
 {
-    public class NLogFactory : ILogFactory
+    internal sealed class NLogFactory : ILogFactory
     {
         private readonly ILogicalThreadContext _logContext;
 

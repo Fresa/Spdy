@@ -76,7 +76,7 @@ namespace Spdy.Frames
         private UInt24 Length
         {
             get => UInt24.From(8);
-            set
+            init
             {
                 if (value.Value is not 8)
                 {
@@ -94,7 +94,7 @@ namespace Spdy.Frames
         public bool IsStreamFlowControl => !IsConnectionFlowControl;
         public bool IsConnectionFlowControl => StreamId == ConnectionFlowId;
 
-        private UInt31 _deltaWindowSize;
+        private readonly UInt31 _deltaWindowSize;
 
         /// <summary>
         /// The additional number of bytes that the sender can transmit in addition to existing remaining window size. The legal range for this field is 1 to 2^31 - 1 (0x7fffffff) bytes.

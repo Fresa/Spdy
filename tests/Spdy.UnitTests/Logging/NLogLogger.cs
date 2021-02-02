@@ -5,7 +5,7 @@ using ILogger = Spdy.Logging.ILogger;
 
 namespace Spdy.UnitTests.Logging
 {
-    public class NLogLogger : ILogger
+    internal sealed class NLogLogger : ILogger
     {
         private readonly Lazy<Logger> _lazyLoggerResolver;
         private Logger Logger => _lazyLoggerResolver.Value;

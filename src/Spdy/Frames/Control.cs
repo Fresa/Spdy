@@ -88,7 +88,7 @@ namespace Spdy.Frames
                         flags, length, frameReader, cancellation)
                     .ConfigureAwait(false)).AsControl(),
                 Settings.Type => (await Settings.TryReadAsync(
-                        flags, length, frameReader, cancellation)
+                        flags, frameReader, cancellation)
                     .ConfigureAwait(false)).AsControl(),
                 Ping.Type => (await Ping.TryReadAsync(
                         flags, length, frameReader, cancellation)

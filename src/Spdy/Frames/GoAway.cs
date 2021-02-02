@@ -68,7 +68,7 @@ namespace Spdy.Frames
         /// </summary>
         private new Options Flags
         {
-            set => base.Flags = (byte) value;
+            init => base.Flags = (byte) value;
         }
 
         [Flags]
@@ -83,7 +83,7 @@ namespace Spdy.Frames
         private UInt24 Length
         {
             get => UInt24.From(8);
-            set
+            init
             {
                 if (value.Value is not 8)
                 {

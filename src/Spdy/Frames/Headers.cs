@@ -73,7 +73,7 @@ namespace Spdy.Frames
         private new Options Flags
         {
             get => (Options)base.Flags;
-            set => base.Flags = (byte)value;
+            init => base.Flags = (byte)value;
         }
 
         [Flags]

@@ -11,13 +11,11 @@ namespace Spdy.Helpers
         internal static SemaphoreSlimGate OneAtATime => 
             new(new SemaphoreSlim(1, 1));
 
-        internal SemaphoreSlimGate(
+        private SemaphoreSlimGate(
             SemaphoreSlim semaphore)
         {
             _semaphore = semaphore;
         }
-
-        internal bool IsBlocked => _semaphore.CurrentCount == 0;
 
         internal async Task<IDisposable> WaitAsync(
             CancellationToken cancellationToken)

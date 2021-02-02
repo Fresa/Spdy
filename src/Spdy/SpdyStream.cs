@@ -99,14 +99,14 @@ namespace Spdy
             {
                 switch (frame)
                 {
-                    case RstStream _:
+                    case RstStream:
                         CloseLocal();
                         return;
-                    case WindowUpdate _:
+                    case WindowUpdate:
                         break;
-                    case SynReply _:
+                    case SynReply:
                         break;
-                    case Data _:
+                    case Data:
                         if (Local.IsClosed)
                         {
                             _logger.Error(

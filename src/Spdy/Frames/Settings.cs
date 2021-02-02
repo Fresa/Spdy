@@ -53,10 +53,10 @@ namespace Spdy.Frames
         /// <summary>
         /// Flags related to this frame. 
         /// </summary>
-        protected new Options Flags
+        private new Options Flags
         {
             get => (Options) base.Flags;
-            private set => base.Flags = (byte) value;
+            init => base.Flags = (byte) value;
         }
 
         [Flags]
@@ -76,7 +76,6 @@ namespace Spdy.Frames
 
         internal static async ValueTask<ReadResult<Settings>> TryReadAsync(
             byte flags,
-            UInt24 _,
             IFrameReader frameReader,
             CancellationToken cancellation = default)
         {
