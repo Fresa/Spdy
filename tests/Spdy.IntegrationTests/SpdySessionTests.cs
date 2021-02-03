@@ -34,7 +34,7 @@ namespace Spdy.IntegrationTests
             protected override async Task WhenAsync(
                 CancellationToken cancellationToken)
             {
-                Session.Open(SynStream.PriorityLevel.High,
+                Session.CreateStream(SynStream.PriorityLevel.High,
                     headers: new NameValueHeaderBlock(
                         ("header1", new[] { "value1" })));
                 _synStream = await Subscriptions.Get<SynStream>()
@@ -85,7 +85,7 @@ namespace Spdy.IntegrationTests
             protected override Task GivenASessionAsync(
                 CancellationToken cancellationToken)
             {
-                _stream = Session.Open();
+                _stream = Session.CreateStream();
                 return Task.CompletedTask;
             }
 
@@ -138,7 +138,7 @@ namespace Spdy.IntegrationTests
             protected override Task GivenASessionAsync(
                 CancellationToken cancellationToken)
             {
-                _stream = Session.Open();
+                _stream = Session.CreateStream();
                 return Task.CompletedTask;
             }
 
@@ -197,7 +197,7 @@ namespace Spdy.IntegrationTests
             protected override async Task GivenASessionAsync(
                 CancellationToken cancellationToken)
             {
-                _stream = Session.Open();
+                _stream = Session.CreateStream();
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 await Server.SendAsync(
@@ -271,7 +271,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open());
+                    Session.CreateStream());
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 await Server.SendAsync(
@@ -340,7 +340,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open());
+                    Session.CreateStream());
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 await Server.SendAsync(
@@ -409,7 +409,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open(options: SynStream.Options.Fin));
+                    Session.CreateStream(options: SynStream.Options.Fin));
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 _headersSubscription = _stream.Headers.Subscribe();
@@ -477,7 +477,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open(options: SynStream.Options.Fin));
+                    Session.CreateStream(options: SynStream.Options.Fin));
                 await Subscriptions.Get<SynStream>()
                                    .ReceiveAsync(cancellationToken)
                                    .ConfigureAwait(false);
@@ -560,7 +560,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open());
+                    Session.CreateStream());
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 await Server.SendAsync(
@@ -663,7 +663,7 @@ namespace Spdy.IntegrationTests
             protected override async Task GivenASessionAsync(
                 CancellationToken cancellationToken)
             {
-                _stream = Session.Open();
+                _stream = Session.CreateStream();
                 await Subscriptions.Get<SynStream>()
                                    .ReceiveAsync(cancellationToken)
                                    .ConfigureAwait(false);
@@ -753,7 +753,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open(options: SynStream.Options.Unidirectional));
+                    Session.CreateStream(options: SynStream.Options.Unidirectional));
                 await Subscriptions.Get<SynStream>()
                                    .ReceiveAsync(cancellationToken)
                                    .ConfigureAwait(false);
@@ -826,7 +826,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open(options: SynStream.Options.Unidirectional | SynStream.Options.Fin));
+                    Session.CreateStream(options: SynStream.Options.Unidirectional | SynStream.Options.Fin));
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 await Server.SendAsync(

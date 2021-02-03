@@ -592,7 +592,7 @@ namespace Spdy
             }
         }
 
-        public SpdyStream Open(
+        public SpdyStream CreateStream(
             SynStream.PriorityLevel priority = SynStream.PriorityLevel.Normal,
             SynStream.Options options = SynStream.Options.None,
             NameValueHeaderBlock? headers = null,
@@ -611,7 +611,7 @@ namespace Spdy
             return stream;
         }
 
-        public Task<SpdyStream> ReceiveAsync(
+        public Task<SpdyStream> ReceiveStreamAsync(
             CancellationToken cancellationToken = default)
             => _receivedStreamRequests
                 .ReceiveAsync(cancellationToken);

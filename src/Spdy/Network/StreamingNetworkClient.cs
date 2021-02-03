@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Spdy.Network
 {
-    public sealed class StreamingNetworkClient : INetworkClient
+    internal sealed class StreamingNetworkClient : INetworkClient
     {
         private readonly Stream _stream;
 
