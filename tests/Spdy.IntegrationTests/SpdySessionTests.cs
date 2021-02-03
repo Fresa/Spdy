@@ -1,4 +1,5 @@
-﻿using System.Buffers;
+﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO.Pipelines;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Spdy.Collections;
+using Spdy.Configuration.Metrics;
 using Spdy.Extensions;
 using Spdy.Frames;
 using Spdy.IntegrationTests.Extensions;
@@ -509,6 +511,82 @@ namespace Spdy.IntegrationTests
             {
                 _pingReceived.Id.Should()
                              .Be(0);
+            }
+        }
+    }
+
+    public partial class Given_an_opened_spdy_stream
+    {
+        public class
+            When_sending_ping : SpdyClientSessionTestSpecification
+        {
+            private SpdyStream _stream = null!;
+            private Ping _pingReceived = default!;
+            private TimeSpan _roundTrip = TimeSpan.MinValue;
+            private readonly SemaphoreSlim _pongReceived = new(0);
+
+            public When_sending_ping(
+                ITestOutputHelper testOutputHelper)
+                : base(testOutputHelper)
+            {
+            }
+
+            protected override Configuration.Configuration SpdySessionConfiguration =>
+                new()
+                {
+                    Ping = new Configuration.Ping
+                    {
+                        PingInterval = TimeSpan.FromMilliseconds(10),
+                        MaxOutstandingPings = 1
+                    },
+                    Metrics = new Metrics
+                    {
+                        PingRoundTripTime = new PingRoundTripTime
+                        {
+                            Observe = time =>
+                            {
+                                _roundTrip = time;
+                                _pongReceived.Release();
+                            }
+                        }
+                    }
+                };
+
+            protected override async Task GivenASessionAsync(
+                CancellationToken cancellationToken)
+            {
+                _stream = DisposeOnTearDown(
+                    Session.CreateStream(options: SynStream.Options.Fin));
+                await Subscriptions.Get<SynStream>()
+                                   .ReceiveAsync(cancellationToken)
+                                   .ConfigureAwait(false);
+                await Server.SendAsync(
+                                SynReply.Accept(
+                                    _stream.Id,
+                                    new NameValueHeaderBlock(
+                                        ("header1", new[] { "Value1" })
+                                    )),
+                                cancellationToken)
+                            .ConfigureAwait(false);
+            }
+
+            protected override async Task WhenAsync(
+                CancellationToken cancellationToken)
+            {
+                _pingReceived = await Subscriptions.Get<Ping>()
+                                                   .ReceiveAsync(
+                                                       cancellationToken)
+                                                   .ConfigureAwait(false);
+                await Server.SendAsync(_pingReceived, cancellationToken)
+                            .ConfigureAwait(false);
+                await _pongReceived.WaitAsync(cancellationToken)
+                                   .ConfigureAwait(false);
+            }
+
+            [Fact]
+            public void It_should_have_reported_a_round_trip_time()
+            {
+                _roundTrip.Should().BeGreaterThan(default);
             }
         }
     }
