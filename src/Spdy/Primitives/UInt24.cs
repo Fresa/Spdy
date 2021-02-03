@@ -9,7 +9,7 @@ namespace Spdy.Primitives
         internal byte Three { get; }
         public uint Value => (uint) (One | (Two << 8) | (Three << 16));
 
-        internal static readonly UInt24 MaxValue = new UInt24(
+        public static readonly UInt24 MaxValue = new(
             byte.MaxValue, byte.MaxValue, byte.MaxValue);
 
         public UInt24(
@@ -62,7 +62,7 @@ namespace Spdy.Primitives
             UInt24 first,
             UInt24 second)
         {
-            return !(first == second);
+            return (first == second);
         }
 
         public override int GetHashCode()

@@ -45,7 +45,7 @@ namespace Spdy.Extensions
         internal static bool IsOdd(
             this uint value)
         {
-            return value % 2 != 0;
+            return value % 2 is not 0;
         }
     }
 }

@@ -51,14 +51,14 @@ namespace Spdy.Frames
             UInt31 streamId,
             NameValueHeaderBlock? headers = null)
         {
-            return new SynReply(Options.Fin, streamId, headers);
+            return new(Options.Fin, streamId, headers);
         }
 
         public static SynReply Accept(
             UInt31 streamId,
             NameValueHeaderBlock? headers = null)
         {
-            return new SynReply(Options.None, streamId, headers);
+            return new(Options.None, streamId, headers);
         }
 
         public const ushort Type = 2;
@@ -69,7 +69,7 @@ namespace Spdy.Frames
         private new Options Flags
         {
             get => (Options)base.Flags;
-            set => base.Flags = (byte)value;
+            init => base.Flags = (byte)value;
         }
 
         [Flags]

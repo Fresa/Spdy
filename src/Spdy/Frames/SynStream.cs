@@ -61,10 +61,10 @@ namespace Spdy.Frames
         /// <summary>
         /// Flags related to this frame. 
         /// </summary>
-        public new Options Flags
+        private new Options Flags
         {
             get => (Options)base.Flags;
-            set => base.Flags = (byte)value;
+            init => base.Flags = (byte)value;
         }
 
         [Flags]

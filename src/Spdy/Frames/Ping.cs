@@ -41,10 +41,9 @@ namespace Spdy.Frames
         /// <summary>
         /// Flags related to this frame. 
         /// </summary>
-        protected new Options Flags
+        private new Options Flags
         {
-            get => (Options)base.Flags;
-            private set => base.Flags = (byte)value;
+            init => base.Flags = (byte)value;
         }
 
         [Flags]
@@ -59,9 +58,9 @@ namespace Spdy.Frames
         public UInt24 Length
         {
             get => UInt24.From(4);
-            private set
+            private init
             {
-                if (value.Value != 4)
+                if (value.Value is not 4)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(Length), "Length can only be 4");

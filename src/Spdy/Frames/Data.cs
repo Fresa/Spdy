@@ -71,7 +71,7 @@ namespace Spdy.Frames
             UInt31 streamId,
             byte[] payload)
         {
-            return new Data(streamId, Options.Fin, payload);
+            return new(streamId, Options.Fin, payload);
         }
         
         internal override async ValueTask WriteAsync(

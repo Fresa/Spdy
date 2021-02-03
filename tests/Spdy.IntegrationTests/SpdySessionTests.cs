@@ -1,4 +1,5 @@
-﻿using System.Buffers;
+﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO.Pipelines;
 using System.Linq;
@@ -19,9 +20,9 @@ using ReadResult = System.IO.Pipelines.ReadResult;
 
 namespace Spdy.IntegrationTests
 {
-    public partial class Given_a_connected_spdy_session
+    public class Given_a_connected_spdy_session
     {
-        public partial class
+        public class
             When_opening_a_stream : SpdyClientSessionTestSpecification
         {
             private SynStream _synStream = null!;
@@ -35,7 +36,7 @@ namespace Spdy.IntegrationTests
             protected override async Task WhenAsync(
                 CancellationToken cancellationToken)
             {
-                Session.Open(SynStream.PriorityLevel.High,
+                Session.CreateStream(SynStream.PriorityLevel.High,
                     headers: new NameValueHeaderBlock(
                         ("header1", new[] { "value1" })));
                 _synStream = await Subscriptions.Get<SynStream>()
@@ -71,7 +72,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_sending_data : SpdyClientSessionTestSpecification
         {
             private Data _dataSent = null!;
@@ -86,7 +87,7 @@ namespace Spdy.IntegrationTests
             protected override Task GivenASessionAsync(
                 CancellationToken cancellationToken)
             {
-                _stream = Session.Open();
+                _stream = Session.CreateStream();
                 return Task.CompletedTask;
             }
 
@@ -124,7 +125,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_sending_headers : SpdyClientSessionTestSpecification
         {
             private Headers _headersSent = null!;
@@ -139,7 +140,7 @@ namespace Spdy.IntegrationTests
             protected override Task GivenASessionAsync(
                 CancellationToken cancellationToken)
             {
-                _stream = Session.Open();
+                _stream = Session.CreateStream();
                 return Task.CompletedTask;
             }
 
@@ -182,12 +183,12 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_receiving_data : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
-            private readonly List<byte> _dataReceived = new List<byte>();
-            private readonly List<WindowUpdate> _flowControlMessages = new List<WindowUpdate>();
+            private readonly List<byte> _dataReceived = new();
+            private readonly List<WindowUpdate> _flowControlMessages = new();
 
             public When_receiving_data(
                 ITestOutputHelper testOutputHelper)
@@ -198,7 +199,7 @@ namespace Spdy.IntegrationTests
             protected override async Task GivenASessionAsync(
                 CancellationToken cancellationToken)
             {
-                _stream = Session.Open();
+                _stream = Session.CreateStream();
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 await Server.SendAsync(
@@ -256,7 +257,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_accepting_a_stream_multiple_times : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -272,7 +273,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open());
+                    Session.CreateStream());
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 await Server.SendAsync(
@@ -325,7 +326,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_receiving_a_window_update_that_exceeds_maximum_window_size : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -341,7 +342,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open());
+                    Session.CreateStream());
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 await Server.SendAsync(
@@ -394,7 +395,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_receiving_headers : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -410,7 +411,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open(options: SynStream.Options.Fin));
+                    Session.CreateStream(options: SynStream.Options.Fin));
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 _headersSubscription = _stream.Headers.Subscribe();
@@ -456,7 +457,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_receiving_ping : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -469,15 +470,16 @@ namespace Spdy.IntegrationTests
             }
 
             protected override Configuration.Configuration SpdySessionConfiguration { get; } =
-                new(
-                    Configuration.Ping.Disabled,
-                    Metrics.Default);
+                new()
+                {
+                    Ping = Configuration.Ping.Disabled
+                };
 
             protected override async Task GivenASessionAsync(
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open(options: SynStream.Options.Fin));
+                    Session.CreateStream(options: SynStream.Options.Fin));
                 await Subscriptions.Get<SynStream>()
                                    .ReceiveAsync(cancellationToken)
                                    .ConfigureAwait(false);
@@ -513,9 +515,85 @@ namespace Spdy.IntegrationTests
         }
     }
 
-    public partial class Given_an_spdy_client_session
+    public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
+            When_sending_ping : SpdyClientSessionTestSpecification
+        {
+            private SpdyStream _stream = null!;
+            private Ping _pingReceived = default!;
+            private TimeSpan _roundTrip = TimeSpan.MinValue;
+            private readonly SemaphoreSlim _pongReceived = new(0);
+
+            public When_sending_ping(
+                ITestOutputHelper testOutputHelper)
+                : base(testOutputHelper)
+            {
+            }
+
+            protected override Configuration.Configuration SpdySessionConfiguration =>
+                new()
+                {
+                    Ping = new Configuration.Ping
+                    {
+                        PingInterval = TimeSpan.FromMilliseconds(10),
+                        MaxOutstandingPings = 1
+                    },
+                    Metrics = new Metrics
+                    {
+                        PingRoundTripTime = new PingRoundTripTime
+                        {
+                            Observe = time =>
+                            {
+                                _roundTrip = time;
+                                _pongReceived.Release();
+                            }
+                        }
+                    }
+                };
+
+            protected override async Task GivenASessionAsync(
+                CancellationToken cancellationToken)
+            {
+                _stream = DisposeOnTearDown(
+                    Session.CreateStream(options: SynStream.Options.Fin));
+                await Subscriptions.Get<SynStream>()
+                                   .ReceiveAsync(cancellationToken)
+                                   .ConfigureAwait(false);
+                await Server.SendAsync(
+                                SynReply.Accept(
+                                    _stream.Id,
+                                    new NameValueHeaderBlock(
+                                        ("header1", new[] { "Value1" })
+                                    )),
+                                cancellationToken)
+                            .ConfigureAwait(false);
+            }
+
+            protected override async Task WhenAsync(
+                CancellationToken cancellationToken)
+            {
+                _pingReceived = await Subscriptions.Get<Ping>()
+                                                   .ReceiveAsync(
+                                                       cancellationToken)
+                                                   .ConfigureAwait(false);
+                await Server.SendAsync(_pingReceived, cancellationToken)
+                            .ConfigureAwait(false);
+                await _pongReceived.WaitAsync(cancellationToken)
+                                   .ConfigureAwait(false);
+            }
+
+            [Fact]
+            public void It_should_have_reported_a_round_trip_time()
+            {
+                _roundTrip.Should().BeGreaterThan(default);
+            }
+        }
+    }
+
+    public class Given_an_spdy_client_session
+    {
+        public class
             When_connecting : SpdyClientSessionTestSpecification
         {
             private Ping _pingReceived = default!;
@@ -545,7 +623,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_receiving_rst : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = null!;
@@ -560,7 +638,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open());
+                    Session.CreateStream());
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 await Server.SendAsync(
@@ -601,9 +679,9 @@ namespace Spdy.IntegrationTests
         }
     }
 
-    public partial class Given_an_opened_spdy_session
+    public class Given_an_opened_spdy_session
     {
-        public partial class
+        public class
             When_receiving_settings : SpdyClientSessionTestSpecification
         {
             private IEnumerable<Settings.Setting> _settingsReceived = new List<Settings.Setting>();
@@ -647,7 +725,7 @@ namespace Spdy.IntegrationTests
 
     public partial class Given_an_opened_spdy_stream
     {
-        public partial class
+        public class
             When_sending_more_data_than_the_window_allows : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = default!;
@@ -663,7 +741,7 @@ namespace Spdy.IntegrationTests
             protected override async Task GivenASessionAsync(
                 CancellationToken cancellationToken)
             {
-                _stream = Session.Open();
+                _stream = Session.CreateStream();
                 await Subscriptions.Get<SynStream>()
                                    .ReceiveAsync(cancellationToken)
                                    .ConfigureAwait(false);
@@ -734,9 +812,9 @@ namespace Spdy.IntegrationTests
         }
     }
 
-    public partial class Given_a_unidirectional_spdy_session
+    public class Given_a_unidirectional_spdy_session
     {
-        public partial class
+        public class
             When_receiving_data : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = default!;
@@ -753,7 +831,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open(options: SynStream.Options.Unidirectional));
+                    Session.CreateStream(options: SynStream.Options.Unidirectional));
                 await Subscriptions.Get<SynStream>()
                                    .ReceiveAsync(cancellationToken)
                                    .ConfigureAwait(false);
@@ -807,9 +885,9 @@ namespace Spdy.IntegrationTests
         }
     }
 
-    public partial class Given_a_closed_spdy_session
+    public class Given_a_closed_spdy_session
     {
-        public partial class
+        public class
             When_receiving_data : SpdyClientSessionTestSpecification
         {
             private SpdyStream _stream = default!;
@@ -826,7 +904,7 @@ namespace Spdy.IntegrationTests
                 CancellationToken cancellationToken)
             {
                 _stream = DisposeOnTearDown(
-                    Session.Open(options: SynStream.Options.Unidirectional | SynStream.Options.Fin));
+                    Session.CreateStream(options: SynStream.Options.Unidirectional | SynStream.Options.Fin));
                 await Subscriptions.Get<SynStream>().ReceiveAsync(cancellationToken)
                                            .ConfigureAwait(false);
                 await Server.SendAsync(

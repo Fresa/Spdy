@@ -54,7 +54,7 @@ namespace Spdy.Frames
         public static RstStream ProtocolError(
             in UInt31 streamId, Exception? exception = default)
         {
-            return new RstStream(streamId, StatusCode.ProtocolError, exception);
+            return new(streamId, StatusCode.ProtocolError, exception);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Spdy.Frames
         public static RstStream InvalidStream(
             in UInt31 streamId)
         {
-            return new RstStream(streamId, StatusCode.InvalidStream);
+            return new(streamId, StatusCode.InvalidStream);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Spdy.Frames
         public static RstStream RefusedStream(
             in UInt31 streamId)
         {
-            return new RstStream(streamId, StatusCode.RefusedStream);
+            return new(streamId, StatusCode.RefusedStream);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Spdy.Frames
         public static RstStream UnsupportedVersion(
             in UInt31 streamId)
         {
-            return new RstStream(streamId, StatusCode.UnsupportedVersion);
+            return new(streamId, StatusCode.UnsupportedVersion);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Spdy.Frames
         public static RstStream Cancel(
             in UInt31 streamId)
         {
-            return new RstStream(streamId, StatusCode.Cancel);
+            return new(streamId, StatusCode.Cancel);
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Spdy.Frames
         public static RstStream InternalError(
             in UInt31 streamId)
         {
-            return new RstStream(streamId, StatusCode.InternalError);
+            return new(streamId, StatusCode.InternalError);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Spdy.Frames
         public static RstStream FlowControlError(
             in UInt31 streamId)
         {
-            return new RstStream(streamId, StatusCode.FlowControlError);
+            return new(streamId, StatusCode.FlowControlError);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace Spdy.Frames
         public static RstStream StreamInUse(
             in UInt31 streamId)
         {
-            return new RstStream(streamId, StatusCode.StreamInUse);
+            return new(streamId, StatusCode.StreamInUse);
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Spdy.Frames
         public static RstStream StreamAlreadyClosed(
             in UInt31 streamId)
         {
-            return new RstStream(streamId, StatusCode.StreamAlreadyClosed);
+            return new(streamId, StatusCode.StreamAlreadyClosed);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Spdy.Frames
         public static RstStream FrameToLarge(
             in UInt31 streamId)
         {
-            return new RstStream(streamId, StatusCode.FrameToLarge);
+            return new(streamId, StatusCode.FrameToLarge);
         }
 
         public const ushort Type = 3;
@@ -145,7 +145,7 @@ namespace Spdy.Frames
         /// </summary>
         private new Options Flags
         {
-            set => base.Flags = (byte)value;
+            init => base.Flags = (byte)value;
         }
 
         [Flags]
@@ -160,9 +160,9 @@ namespace Spdy.Frames
         public UInt24 Length
         {
             get => UInt24.From(8);
-            private set
+            private init
             {
-                if (value.Value != 8)
+                if (value.Value is not 8)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(Length), "Length can only be 8");

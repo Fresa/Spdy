@@ -6,7 +6,7 @@ namespace Spdy.Endpoint
     internal sealed class EndpointStateBuilder : IEndpointStateBuilder, IOrEndpointStateBuilder
     {
         private readonly ConcurrentDictionary<EndpointState, EndpointStateNode> _branches =
-            new ConcurrentDictionary<EndpointState, EndpointStateNode>();
+            new();
 
         private readonly EndpointState _state;
 
@@ -41,6 +41,6 @@ namespace Spdy.Endpoint
 
         public IEndpointStateIterator Build() => new EndpointStateIterator(Node);
         private EndpointStateNode Node => 
-            new EndpointStateNode(_state, _branches);
+            new(_state, _branches);
     }
 }

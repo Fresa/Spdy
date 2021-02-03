@@ -45,7 +45,7 @@ namespace Spdy.Frames
         }
 
         public static Settings Clear(
-            params Setting[] values) => new Settings(
+            params Setting[] values) => new(
             Options.ClearSettings, values);
 
         public const ushort Type = 4;
@@ -53,10 +53,10 @@ namespace Spdy.Frames
         /// <summary>
         /// Flags related to this frame. 
         /// </summary>
-        protected new Options Flags
+        private new Options Flags
         {
             get => (Options) base.Flags;
-            private set => base.Flags = (byte) value;
+            init => base.Flags = (byte) value;
         }
 
         [Flags]
@@ -76,7 +76,6 @@ namespace Spdy.Frames
 
         internal static async ValueTask<ReadResult<Settings>> TryReadAsync(
             byte flags,
-            UInt24 _,
             IFrameReader frameReader,
             CancellationToken cancellation = default)
         {
@@ -132,7 +131,7 @@ namespace Spdy.Frames
         public static Setting ClientCertificateVectorSize(
             uint value,
             ValueOptions flags = ValueOptions.None)
-            => new Setting(
+            => new(
                 Id.ClientCertificateVectorSize,
                 flags,
                 value);
@@ -141,7 +140,7 @@ namespace Spdy.Frames
         public static Setting CurrentCwnd(
             uint value,
             ValueOptions flags = ValueOptions.None)
-            => new Setting(
+            => new(
                 Id.CurrentCwnd,
                 flags,
                 value);
@@ -149,7 +148,7 @@ namespace Spdy.Frames
         public static Setting DownloadBandwidth(
             uint value,
             ValueOptions flags = ValueOptions.None)
-            => new Setting(
+            => new(
                 Id.DownloadBandwidth,
                 flags,
                 value);
@@ -157,7 +156,7 @@ namespace Spdy.Frames
         public static Setting DownloadRetransRate(
             uint value,
             ValueOptions flags = ValueOptions.None)
-            => new Setting(
+            => new(
                 Id.DownloadRetransRate,
                 flags,
                 value);
@@ -165,7 +164,7 @@ namespace Spdy.Frames
         public static Setting InitialWindowSize(
             uint value,
             ValueOptions flags = ValueOptions.None)
-            => new Setting(
+            => new(
                 Id.InitialWindowSize,
                 flags,
                 value);
@@ -173,7 +172,7 @@ namespace Spdy.Frames
         public static Setting MaxConcurrentStreams(
             uint value,
             ValueOptions flags = ValueOptions.None)
-            => new Setting(
+            => new(
                 Id.MaxConcurrentStreams,
                 flags,
                 value);
@@ -181,7 +180,7 @@ namespace Spdy.Frames
         public static Setting RoundTripTime(
             uint value,
             ValueOptions flags = ValueOptions.None)
-            => new Setting(
+            => new(
                 Id.RoundTripTime,
                 flags,
                 value);
@@ -189,7 +188,7 @@ namespace Spdy.Frames
         public static Setting UploadBandwidth(
             uint value,
             ValueOptions flags = ValueOptions.None)
-            => new Setting(
+            => new(
                 Id.UploadBandwidth,
                 flags,
                 value);

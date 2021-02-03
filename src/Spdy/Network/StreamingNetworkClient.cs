@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Spdy.Network
 {
-    public sealed class StreamingNetworkClient : INetworkClient
+    internal sealed class StreamingNetworkClient : INetworkClient
     {
         private readonly Stream _stream;
 
@@ -14,7 +14,7 @@ namespace Spdy.Network
             _stream = stream;
         }
 
-        public ValueTask DisposeAsync() => new ValueTask();
+        public ValueTask DisposeAsync() => new();
 
         public ValueTask<int> ReceiveAsync(
             Memory<byte> buffer,

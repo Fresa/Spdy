@@ -54,7 +54,7 @@ namespace Spdy.Frames
         public static WindowUpdate ConnectionFlowControl(
             UInt31 deltaWindowSize)
         {
-            return new WindowUpdate(ConnectionFlowId, deltaWindowSize);
+            return new(ConnectionFlowId, deltaWindowSize);
         }
 
         public const ushort Type = 9;
@@ -64,7 +64,7 @@ namespace Spdy.Frames
         /// </summary>
         private new Options Flags
         {
-            set => base.Flags = (byte) value;
+            init => base.Flags = (byte) value;
         }
 
         [Flags]
@@ -76,9 +76,9 @@ namespace Spdy.Frames
         private UInt24 Length
         {
             get => UInt24.From(8);
-            set
+            init
             {
-                if (value.Value != 8)
+                if (value.Value is not 8)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(Length), $"Length can only be 8, was {value}");
@@ -94,7 +94,7 @@ namespace Spdy.Frames
         public bool IsStreamFlowControl => !IsConnectionFlowControl;
         public bool IsConnectionFlowControl => StreamId == ConnectionFlowId;
 
-        private UInt31 _deltaWindowSize;
+        private readonly UInt31 _deltaWindowSize;
 
         /// <summary>
         /// The additional number of bytes that the sender can transmit in addition to existing remaining window size. The legal range for this field is 1 to 2^31 - 1 (0x7fffffff) bytes.
@@ -102,7 +102,7 @@ namespace Spdy.Frames
         public UInt31 DeltaWindowSize
         {
             get => _deltaWindowSize;
-            private set
+            private init
             {
                 if (value < 1)
                 {

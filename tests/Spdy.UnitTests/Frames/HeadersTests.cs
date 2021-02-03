@@ -34,7 +34,7 @@ namespace Spdy.UnitTests.Frames
         public class When_writing : XUnit2UnitTestSpecificationAsync
         {
             private Headers _frame;
-            private readonly MemoryStream _serialized = new MemoryStream();
+            private readonly MemoryStream _serialized = new();
 
             public When_writing(ITestOutputHelper testOutputHelper) : base(testOutputHelper)
             {
@@ -79,7 +79,7 @@ namespace Spdy.UnitTests.Frames
         public class When_reading : XUnit2UnitTestSpecificationAsync
         {
             private readonly MemoryStream _serialized =
-                new MemoryStream(Message);
+                new(Message);
 
             private Headers _message;
 

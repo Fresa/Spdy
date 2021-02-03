@@ -12,8 +12,7 @@ namespace Spdy.Collections
     {
         private readonly Dictionary<SynStream.PriorityLevel,
             ConcurrentQueue<T>> _priorityQueues =
-            new Dictionary<SynStream.PriorityLevel,
-                ConcurrentQueue<T>>(
+            new(
                 Enum.GetValues(typeof(SynStream.PriorityLevel))
                     .Cast<SynStream.PriorityLevel>()
                     .OrderBy(priority => priority)
@@ -23,7 +22,7 @@ namespace Spdy.Collections
                                 ConcurrentQueue<T>>(
                                 priority, new ConcurrentQueue<T>())));
 
-        private readonly SemaphoreSlim _itemsAvailable = new SemaphoreSlim(0);
+        private readonly SemaphoreSlim _itemsAvailable = new(0);
 
         public void Enqueue(
             SynStream.PriorityLevel priority,

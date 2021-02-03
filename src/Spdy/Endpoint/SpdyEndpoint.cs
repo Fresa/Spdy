@@ -14,11 +14,11 @@ namespace Spdy.Endpoint
                                         builder.Then(EndpointState.Closed))
                                 .Build();
 
-        private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationSource = new();
 
         internal CancellationToken Cancellation { get; }
 
-        private event Action<EndpointState> StateChanged = source => { };
+        private event Action<EndpointState> StateChanged = _ => { };
 
         internal SpdyEndpoint()
         {
@@ -83,6 +83,8 @@ namespace Spdy.Endpoint
             {
                 if (changedState == state)
                 {
+                    // ReSharper disable once AccessToDisposedClosure
+                    // Will not be disposed due to the signal await above
                     signal.Release();
                 }
             }

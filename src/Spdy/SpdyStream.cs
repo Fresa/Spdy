@@ -22,18 +22,18 @@ namespace Spdy
         private readonly ConcurrentPriorityQueue<Frame> _sendingPriorityQueue;
 
         private readonly ConcurrentQueue<Data> _receivingQueue
-            = new ConcurrentQueue<Data>();
-        private readonly SemaphoreSlim _frameAvailable = new SemaphoreSlim(0);
+            = new();
+        private readonly SemaphoreSlim _frameAvailable = new(0);
 
         private readonly RstStream _streamInUse;
         private readonly RstStream _protocolError;
         private readonly RstStream _flowControlError;
         private readonly RstStream _streamAlreadyClosedError;
 
-        private readonly ConcurrentDistinctTypeBag _controlFramesReceived = new ConcurrentDistinctTypeBag();
-        private readonly ConcurrentDistinctTypeBag _controlFramesSent = new ConcurrentDistinctTypeBag();
+        private readonly ConcurrentDistinctTypeBag _controlFramesReceived = new();
+        private readonly ConcurrentDistinctTypeBag _controlFramesSent = new();
 
-        private readonly ObservableConcurrentDictionary<string, string[]> _headers = new ObservableConcurrentDictionary<string, string[]>();
+        private readonly ObservableConcurrentDictionary<string, string[]> _headers = new();
 
         public IObservableReadOnlyDictionary<string, string[]> Headers => _headers;
         public int SessionId { get; }
@@ -58,9 +58,9 @@ namespace Spdy
 
         public UInt31 Id => _synStream.StreamId;
 
-        private readonly SpdyEndpoint _local = new SpdyEndpoint();
+        private readonly SpdyEndpoint _local = new();
         public IEndpoint Local => _local;
-        private readonly SpdyEndpoint _remote = new SpdyEndpoint();
+        private readonly SpdyEndpoint _remote = new();
         public IEndpoint Remote => _remote;
 
         private void OpenRemote()
@@ -99,14 +99,14 @@ namespace Spdy
             {
                 switch (frame)
                 {
-                    case RstStream _:
+                    case RstStream:
                         CloseLocal();
                         return;
-                    case WindowUpdate _:
+                    case WindowUpdate:
                         break;
-                    case SynReply _:
+                    case SynReply:
                         break;
-                    case Data _:
+                    case Data:
                         if (Local.IsClosed)
                         {
                             _logger.Error(
@@ -328,7 +328,7 @@ namespace Spdy
             _sendingPriorityQueue.Enqueue(Priority, frame);
         }
 
-        private readonly ExclusiveLock _sendLock = new ExclusiveLock();
+        private readonly ExclusiveLock _sendLock = new();
 
         public Task<FlushResult> SendAsync(
             ReadOnlyMemory<byte> data,
@@ -433,7 +433,9 @@ namespace Spdy
         public Task<FlushResult> SendHeadersAsync(
             NameValueHeaderBlock headers,
             Headers.Options options = Frames.Headers.Options.None,
+            // ReSharper disable once UnusedParameter.Global Public API
             TimeSpan timeout = default,
+            // ReSharper disable once UnusedParameter.Global Public API
             CancellationToken cancellationToken = default)
         {
             if (Local.IsClosed)
@@ -454,7 +456,7 @@ namespace Spdy
             return Task.FromResult(new FlushResult(false, true));
         }
 
-        private readonly SemaphoreSlim _windowSizeGate = new SemaphoreSlim(0);
+        private readonly SemaphoreSlim _windowSizeGate = new(0);
 
         private void IncreaseWindowSize(
             int delta)
@@ -479,7 +481,7 @@ namespace Spdy
             }
         }
 
-        public async Task<System.IO.Pipelines.ReadResult> ReceiveAsync(
+        public async Task<ReadResult> ReceiveAsync(
             TimeSpan timeout = default,
             CancellationToken cancellationToken = default)
         {
@@ -507,7 +509,7 @@ namespace Spdy
                         Send(new WindowUpdate(Id, (uint)frame.Payload.Length));
                     }
 
-                    return new System.IO.Pipelines.ReadResult(
+                    return new ReadResult(
                         new ReadOnlySequence<byte>(frame.Payload), false,
                         frame.IsLastFrame);
                 }
@@ -533,7 +535,7 @@ namespace Spdy
                     // not been consumed before cancelling.
                     if (_receivingQueue.IsEmpty)
                     {
-                        return new System.IO.Pipelines.ReadResult(
+                        return new ReadResult(
                             ReadOnlySequence<byte>.Empty, true, false);
                     }
                 }

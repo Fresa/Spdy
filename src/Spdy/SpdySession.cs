@@ -34,13 +34,13 @@ namespace Spdy
         private readonly SemaphoreSlimGate _sendingGate =
             SemaphoreSlimGate.OneAtATime;
 
-        private readonly Pipe _messageReceiver = new Pipe(new PipeOptions(useSynchronizationContext: false));
+        private readonly Pipe _messageReceiver = new(new PipeOptions(useSynchronizationContext: false));
 
         private readonly CancellationTokenSource
             _sendingCancellationTokenSource;
 
         private readonly CancellationTokenSource
-            _sessionCancellationTokenSource = new CancellationTokenSource();
+            _sessionCancellationTokenSource = new();
 
         private CancellationToken SessionCancellationToken
             => _sessionCancellationTokenSource.Token;
@@ -51,21 +51,20 @@ namespace Spdy
         private readonly Task _sendPingTask;
 
         private readonly ConcurrentPriorityQueue<Frame> _sendingPriorityQueue =
-            new ConcurrentPriorityQueue<Frame>();
+            new();
 
         private UInt31 _nextStreamId;
         private UInt31 _lastGoodStreamId;
 
-        private readonly BufferBlock<SpdyStream> _receivedStreamRequests = new BufferBlock<SpdyStream>();
+        private readonly BufferBlock<SpdyStream> _receivedStreamRequests = new();
 
         private readonly ConcurrentDictionary<UInt31, SpdyStream> _streams =
-            new ConcurrentDictionary<UInt31, SpdyStream>();
+            new();
 
         private readonly
             ObservableConcurrentDictionary<Settings.Id, Settings.Setting>
             _settings =
-                new ObservableConcurrentDictionary<Settings.Id, Settings.Setting
-                >();
+                new();
 
         public IObservableReadOnlyCollection<Settings.Setting> Settings
             => _settings;
@@ -102,18 +101,14 @@ namespace Spdy
         public static SpdySession CreateClient(
             INetworkClient networkClient,
             Configuration.Configuration? configuration = default)
-        {
-            return new SpdySession(
-                networkClient, true, configuration ?? Configuration.Configuration.Default);
-        }
+            => new(
+                networkClient, true, configuration ?? new Configuration.Configuration());
 
         public static SpdySession CreateServer(
             INetworkClient networkClient,
             Configuration.Configuration? configuration = default)
-        {
-            return new SpdySession(
-                networkClient, false, configuration ?? Configuration.Configuration.Default);
-        }
+            => new(
+                networkClient, false, configuration ?? new Configuration.Configuration());
 
         private Task StartBackgroundTaskAsync(
             Func<CancellationToken, Task> action,
@@ -243,7 +238,7 @@ namespace Spdy
         }
 
         private readonly Signaler
-            _windowSizeIncreased = new Signaler();
+            _windowSizeIncreased = new();
 
         private void TryIncreaseWindowSizeOrCloseSession(
             int delta)
@@ -274,7 +269,7 @@ namespace Spdy
             }
         }
 
-        private readonly ConcurrentDictionary<UInt31, Stopwatch> _pingsSent = new ConcurrentDictionary<UInt31, Stopwatch>();
+        private readonly ConcurrentDictionary<UInt31, Stopwatch> _pingsSent = new();
         private async Task SendPingsAsync(CancellationToken cancellationToken)
         {
             if (_configuration.Ping.MaxOutstandingPings == 0)
@@ -597,7 +592,7 @@ namespace Spdy
             }
         }
 
-        public SpdyStream Open(
+        public SpdyStream CreateStream(
             SynStream.PriorityLevel priority = SynStream.PriorityLevel.Normal,
             SynStream.Options options = SynStream.Options.None,
             NameValueHeaderBlock? headers = null,
@@ -616,7 +611,7 @@ namespace Spdy
             return stream;
         }
 
-        public Task<SpdyStream> ReceiveAsync(
+        public Task<SpdyStream> ReceiveStreamAsync(
             CancellationToken cancellationToken = default)
             => _receivedStreamRequests
                 .ReceiveAsync(cancellationToken);

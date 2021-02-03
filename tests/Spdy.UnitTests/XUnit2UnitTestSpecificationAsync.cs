@@ -14,10 +14,10 @@ namespace Spdy.UnitTests
         : XUnit2SpecificationAsync
     {
         private readonly List<IDisposable> _disposables =
-            new List<IDisposable>();
+            new();
 
         private readonly List<IAsyncDisposable> _asyncDisposables =
-            new List<IAsyncDisposable>();
+            new();
 
         static XUnit2UnitTestSpecificationAsync()
         {
@@ -42,7 +42,7 @@ namespace Spdy.UnitTests
         protected override CancellationTokenSource CancellationTokenSource
         {
             get;
-        } = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+        } = new(TimeSpan.FromSeconds(3));
 
         protected T DisposeOnTearDown<T>(
             T disposable)
@@ -79,7 +79,7 @@ namespace Spdy.UnitTests
                                      .ConfigureAwait(false);
             }
 
-            await base.DisposeAsync(disposing)
+            await base.DisposeAsync(true)
                       .ConfigureAwait(false);
         }
     }

@@ -11,7 +11,7 @@ namespace Spdy.Primitives
 
         public uint Value => (uint)(One | (Two << 8) | (Three << 16) | (Four << 24));
 
-        internal static readonly UInt31 MaxValue = new UInt31(
+        internal static readonly UInt31 MaxValue = new(
             byte.MaxValue, byte.MaxValue, byte.MaxValue, 0x7F);
 
         private bool Equals(

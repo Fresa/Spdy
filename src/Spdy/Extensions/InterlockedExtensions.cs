@@ -5,14 +5,6 @@ namespace Spdy.Extensions
 {
     internal static class InterlockedExtensions
     {
-        internal static unsafe uint Exchange(ref uint target, uint value)
-        {
-            fixed (uint* pointerToTarget = &target)
-            {
-                return (uint)Interlocked.Exchange(ref *(int*)pointerToTarget, (int)value);
-            }
-        }
-
         internal static unsafe UInt31 Exchange(ref UInt31 target, UInt31 value)
         {
             fixed (UInt31* pointerToTarget = &target)

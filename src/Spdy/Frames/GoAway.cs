@@ -51,15 +51,15 @@ namespace Spdy.Frames
 
         public static GoAway Ok(
             UInt31 lastGoodStreamId)
-            => new GoAway(lastGoodStreamId, StatusCode.Ok);
+            => new(lastGoodStreamId, StatusCode.Ok);
 
         public static GoAway ProtocolError(
             UInt31 lastGoodStreamId)
-            => new GoAway(lastGoodStreamId, StatusCode.ProtocolError);
+            => new(lastGoodStreamId, StatusCode.ProtocolError);
 
         public static GoAway InternalError(
             UInt31 lastGoodStreamId)
-            => new GoAway(lastGoodStreamId, StatusCode.InternalError);
+            => new(lastGoodStreamId, StatusCode.InternalError);
 
         public const ushort Type = 7;
 
@@ -68,7 +68,7 @@ namespace Spdy.Frames
         /// </summary>
         private new Options Flags
         {
-            set => base.Flags = (byte) value;
+            init => base.Flags = (byte) value;
         }
 
         [Flags]
@@ -83,9 +83,9 @@ namespace Spdy.Frames
         private UInt24 Length
         {
             get => UInt24.From(8);
-            set
+            init
             {
-                if (value.Value != 8)
+                if (value.Value is not 8)
                 {
                     throw new ArgumentOutOfRangeException(
                         nameof(Length), "Length can only be 8");

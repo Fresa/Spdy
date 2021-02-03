@@ -28,7 +28,7 @@ namespace Spdy.Helpers
 
         private class ConcurrentWaiter : IWaiter
         {
-            private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(0);
+            private readonly SemaphoreSlim _semaphore = new(0);
             private bool _isDisposed;
 
             public Task WaitAsync(

@@ -23,7 +23,7 @@ namespace Spdy.UnitTests.Frames
         public class When_writing : XUnit2UnitTestSpecificationAsync
         {
             private Ping _frame;
-            private readonly MemoryStream _serialized = new MemoryStream();
+            private readonly MemoryStream _serialized = new();
 
             protected override Task GivenAsync(
                 CancellationToken cancellationToken)
@@ -55,7 +55,7 @@ namespace Spdy.UnitTests.Frames
         public class When_reading : XUnit2UnitTestSpecificationAsync
         {
             private readonly MemoryStream _serialized =
-                new MemoryStream(Message);
+                new(Message);
 
             private Ping _message;
 

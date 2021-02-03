@@ -15,17 +15,17 @@ namespace Spdy.IntegrationTests
         {
         }
 
-        protected SpdyTestServer Server { get; } = new SpdyTestServer();
+        protected SpdyTestServer Server { get; } = new();
         protected SpdySession Session { get; private set; } = default!;
 
         protected CancellationToken CancellationToken
             => CancellationTokenSource.Token;
 
         protected virtual Configuration.Configuration SpdySessionConfiguration
-            => Configuration.Configuration.Default;
+            => new();
 
         internal SubscriptionCollection<Frame> Subscriptions { get; } =
-            new SubscriptionCollection<Frame>();
+            new();
 
         protected sealed override async Task GivenAsync(
             CancellationToken cancellationToken)

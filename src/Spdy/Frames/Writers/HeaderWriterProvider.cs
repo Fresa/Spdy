@@ -10,14 +10,14 @@ namespace Spdy.Frames.Writers
 {
     internal sealed class HeaderWriterProvider : IHeaderWriterProvider, IAsyncDisposable
     {
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
         private readonly ValueTask _backgroundTask;
-        private readonly ZlibCodec _zlibCodec = new ZlibCodec();
+        private readonly ZlibCodec _zlibCodec = new();
 
         private CancellationToken CancellationToken
             => _cancellationTokenSource.Token;
 
-        private readonly BufferBlock<(PipeReader OutputReader, PipeWriter OutputWriter, bool last)> _requestQueue = new BufferBlock<(PipeReader OutputReader, PipeWriter OutputWriter, bool last)>();
+        private readonly BufferBlock<(PipeReader OutputReader, PipeWriter OutputWriter, bool last)> _requestQueue = new();
 
         public HeaderWriterProvider()
         {
@@ -74,7 +74,7 @@ namespace Spdy.Frames.Writers
                         .ConfigureAwait(false);
                     try
                     {
-                        System.IO.Pipelines.ReadResult inputBuffer;
+                        ReadResult inputBuffer;
                         do
                         {
                             inputBuffer = await inputReader
@@ -145,7 +145,7 @@ namespace Spdy.Frames.Writers
                         $"Got error code {result} when deflating the stream: {_zlibCodec.Message}");
                 }
 
-                if (flushType == FlushType.Finish && result != ZlibConstants.Z_STREAM_END)
+                if (flushType == FlushType.Finish && result is not ZlibConstants.Z_STREAM_END)
                 {
                     throw new InvalidOperationException($"Expected END, got {result}");
                 }

@@ -63,7 +63,7 @@ namespace Spdy.Frames
             var version =
                 (ushort) (await frameReader.ReadUShortAsync(cancellation)
                     .ConfigureAwait(false) & 0x7FFF);
-            if (version != Version)
+            if (version is not Version)
             {
                 // todo: What stream id should be specified here?
                 return ReadResult<Control>.Error(RstStream.UnsupportedVersion(UInt31.From(0)));
@@ -88,7 +88,7 @@ namespace Spdy.Frames
                         flags, length, frameReader, cancellation)
                     .ConfigureAwait(false)).AsControl(),
                 Settings.Type => (await Settings.TryReadAsync(
-                        flags, length, frameReader, cancellation)
+                        flags, frameReader, cancellation)
                     .ConfigureAwait(false)).AsControl(),
                 Ping.Type => (await Ping.TryReadAsync(
                         flags, length, frameReader, cancellation)
