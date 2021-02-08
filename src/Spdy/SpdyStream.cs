@@ -192,6 +192,14 @@ namespace Spdy
                     }
 
                     break;
+                case GoAway:
+                    _logger.Warning(
+                        "[{SessionId}:{StreamId}]: Received {FrameType}, closing stream. {@Frame}",
+                        SessionId, Id, frame.GetType()
+                                            .Name, frame);
+                    CloseRemote();
+                    CloseLocal();
+                    break;
                 case Data data:
                     // If the endpoint which created the stream receives a data frame
                     // before receiving a SYN_REPLY on that stream, it is a protocol

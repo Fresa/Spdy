@@ -955,4 +955,53 @@ namespace Spdy.IntegrationTests
             }
         }
     }
+
+    public partial class Given_an_opened_spdy_stream
+    {
+        public class
+            When_receiving_go_away : SpdyClientSessionTestSpecification
+        {
+            private SpdyStream _stream = null!;
+
+            public When_receiving_go_away(
+                ITestOutputHelper testOutputHelper)
+                : base(testOutputHelper)
+            {
+            }
+
+            protected override async Task GivenASessionAsync(
+                CancellationToken cancellationToken)
+            {
+                _stream = DisposeOnTearDown(
+                    Session.CreateStream());
+                await Subscriptions.Get<SynStream>()
+                                   .ReceiveAsync(cancellationToken)
+                                   .ConfigureAwait(false);
+                await Server.SendAsync(
+                                SynReply.Accept(
+                                    _stream.Id,
+                                    new NameValueHeaderBlock(
+                                        ("header1", new[] { "Value1" })
+                                    )),
+                                cancellationToken)
+                            .ConfigureAwait(false);
+            }
+
+            protected override Task WhenAsync(
+                CancellationToken cancellationToken)
+                => Server.SendAsync(GoAway.Ok(UInt31.From(0)), cancellationToken);
+
+            [Fact]
+            public Task It_should_have_closed_the_streams_local_endpoint()
+            {
+                return _stream.Local.WaitForClosedAsync(CancellationToken);
+            }
+
+            [Fact]
+            public Task It_should_have_closed_the_streams_remote_endpoint()
+            {
+                return _stream.Remote.WaitForClosedAsync(CancellationToken);
+            }
+        }
+    }
 }

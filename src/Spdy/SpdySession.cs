@@ -527,6 +527,11 @@ namespace Spdy
                         Id,
                         nameof(GoAway),
                         goAway.Status.GetName());
+
+                    foreach (var spdyStream in _streams.Values)
+                    {
+                        spdyStream.Receive(goAway);
+                    }
                     return;
                 case Headers headers:
                     (found, stream) =
