@@ -59,6 +59,9 @@ do
 } while (!readResult.IsCompleted);
 ```
 
+### Logging
+Logging can be enabled by calling `Spdy.Logging.LogFactory.TryInitializeOnce(ILogFactory logFactory)` with an implementation of `ILogFactory`. Since this method is static it will only set the first log factory it is called with and ignore all other calls.
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 

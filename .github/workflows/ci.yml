@@ -3,7 +3,9 @@ name: Continuous Delivery
 on:
   push:
     branches: 
-      - '*'
+    - '*'
+    paths-ignore:
+    - '**/README.md'
 
 jobs:
   build:    
