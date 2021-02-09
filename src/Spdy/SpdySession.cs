@@ -477,6 +477,7 @@ namespace Spdy
                     stream.Receive(frame);
                     break;
                 case Settings settings:
+                    if (settings.ClearSettings)
                     {
                         _settings.Clear();
                     }
