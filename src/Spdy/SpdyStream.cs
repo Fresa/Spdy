@@ -114,7 +114,7 @@ namespace Spdy
                                 "[{SessionId}:{StreamId}]: The stream is fully closed. Received: {@Frame}",
                                 SessionId, Id,
                                 frame.ToStructuredLogging());
-                            Send(_protocolError);
+                            Enqueue(_protocolError);
                             return;
                         }
 
@@ -126,7 +126,7 @@ namespace Spdy
                             _protocolError,
                             "[{SessionId}:{StreamId}]: The remote stream is closed. Received: {@Frame}",
                             SessionId, Id, frame.ToStructuredLogging());
-                        Send(_streamAlreadyClosedError);
+                        Enqueue(_streamAlreadyClosedError);
                         return;
                     default:
                         return;
@@ -138,7 +138,7 @@ namespace Spdy
                 case SynReply synReply:
                     if (_controlFramesReceived.TryAdd<SynReply>() == false)
                     {
-                        Send(_streamInUse);
+                        Enqueue(_streamInUse);
                         return;
                     }
 
@@ -211,7 +211,7 @@ namespace Spdy
                             _protocolError,
                             "[{SessionId}:{StreamId}]: {FrameType} has already been received",
                             SessionId, Id, nameof(SynReply));
-                        Send(_protocolError);
+                        Enqueue(_protocolError);
                         return;
                     }
 
@@ -245,7 +245,7 @@ namespace Spdy
                     $"Header with key '{key}' has been sent twice",
                     SessionId,
                     Id);
-                Send(_protocolError);
+                Enqueue(_protocolError);
                 break;
             }
         }
@@ -288,7 +288,7 @@ namespace Spdy
                 OpenLocal();
             }
 
-            Send(reply);
+            Enqueue(reply);
         }
 
         internal static SpdyStream Open(
@@ -317,44 +317,42 @@ namespace Spdy
                 OpenLocal();
             }
 
-            Send(_synStream);
+            Enqueue(_synStream);
         }
 
-        private void Send(
+        private void Enqueue(
             RstStream rstStream)
         {
             CloseRemote();
             CloseLocal();
 
             _controlFramesSent.TryAdd<RstStream>();
-            Send((Frame)rstStream);
+            _sendingPriorityQueue.Enqueue(Priority, rstStream);
         }
 
-        private void Send(
+        private void Enqueue(
             Frame frame)
-        {
-            _sendingPriorityQueue.Enqueue(Priority, frame);
-        }
-
+            => _sendingPriorityQueue.Enqueue(Priority, frame);
+        
+        private Task SendAsync(
+            Frame frame)
+            => _sendingPriorityQueue.SendAsync(Priority, frame);
+        
         private readonly ExclusiveLock _sendLock = new();
 
         public Task<FlushResult> SendAsync(
             ReadOnlyMemory<byte> data,
             TimeSpan timeout = default,
             CancellationToken cancellationToken = default)
-        {
-            return SendDataAsync(
-                    data, false, timeout, cancellationToken);
-        }
+            => SendDataAsync(
+                data, false, timeout, cancellationToken);
 
         public Task<FlushResult> SendLastAsync(
             ReadOnlyMemory<byte> data,
             TimeSpan timeout = default,
             CancellationToken cancellationToken = default)
-        {
-            return SendDataAsync(
-                    data, true, timeout, cancellationToken);
-        }
+            => SendDataAsync(
+                data, true, timeout, cancellationToken);
 
         private async Task<FlushResult> SendDataAsync(
             ReadOnlyMemory<byte> data,
@@ -377,6 +375,7 @@ namespace Spdy
                         .CreateLinkedTokenSource(tokens.ToArray())
                         .Token;
 
+            var sendTasks = new List<Task>();
             using (_sendLock.TryAcquire(out var acquired))
             {
                 if (acquired == false)
@@ -423,11 +422,22 @@ namespace Spdy
                         ? Data.Last(Id, payload)
                         : new Data(Id, payload);
 
-                    Send(frame);
+                    sendTasks.Add(
+                        SendAsync(frame));
 
                     index += length;
                     left = data.Length - index;
                 }
+            }
+            
+            Task task = Task.CompletedTask;
+            try
+            {
+                task = Task.WhenAll(sendTasks);
+                await task;
+            }
+            catch when (task.IsCanceled)
+            {
             }
 
             if (isFin)
@@ -435,10 +445,10 @@ namespace Spdy
                 CloseLocal();
             }
 
-            return new FlushResult(false, isFin);
+            return new FlushResult(task.IsCanceled, !task.IsCanceled && isFin);
         }
 
-        public Task<FlushResult> SendHeadersAsync(
+        public async Task<FlushResult> SendHeadersAsync(
             NameValueHeaderBlock headers,
             Headers.Options options = Frames.Headers.Options.None,
             // ReSharper disable once UnusedParameter.Global Public API
@@ -448,20 +458,30 @@ namespace Spdy
         {
             if (Local.IsClosed)
             {
-                return Task.FromResult(new FlushResult(true, false));
+                return new FlushResult(true, false);
             }
 
+            Task sendTask;
             if (options == Frames.Headers.Options.Fin)
             {
-                Send(Frames.Headers.Last(Id, headers));
+                sendTask = SendAsync(Frames.Headers.Last(Id, headers));
                 CloseLocal();
             }
             else
             {
-                Send(new Headers(Id, headers));
+                sendTask = SendAsync(new Headers(Id, headers));
             }
 
-            return Task.FromResult(new FlushResult(false, true));
+            try
+            {
+                await sendTask
+                    .ConfigureAwait(false);
+            }
+            catch when (sendTask.IsCanceled)
+            {
+            }
+
+            return new FlushResult(sendTask.IsCanceled, !sendTask.IsCanceled);
         }
 
         private readonly SemaphoreSlim _windowSizeGate = new(0);
@@ -477,7 +497,7 @@ namespace Spdy
             }
             catch (OverflowException)
             {
-                Send(_flowControlError);
+                Enqueue(_flowControlError);
                 return;
             }
 
@@ -514,7 +534,7 @@ namespace Spdy
                 {
                     if (frame.Payload.Length > 0)
                     {
-                        Send(new WindowUpdate(Id, (uint)frame.Payload.Length));
+                        Enqueue(new WindowUpdate(Id, (uint)frame.Payload.Length));
                     }
 
                     return new ReadResult(
@@ -554,7 +574,7 @@ namespace Spdy
         {
             if (Local.IsOpen)
             {
-                Send(RstStream.Cancel(Id));
+                Enqueue(RstStream.Cancel(Id));
             }
             
             if (Remote.IsOpen)

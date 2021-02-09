@@ -161,26 +161,41 @@ namespace Spdy
             while (cancellationToken
                 .IsCancellationRequested == false)
             {
-                var frame = await _sendingPriorityQueue
-                                  .DequeueAsync(cancellationToken)
-                                  .ConfigureAwait(false);
+                var (frame, sentCompletionSource) = await _sendingPriorityQueue
+                    .DequeueAsync(cancellationToken)
+                    .ConfigureAwait(false);
 
-                switch (frame)
+                try
                 {
-                    case Data data:
-                        // todo: Should we always wait for data frames to be sent before sending
-                        // the next frame (which might be a control frame that are not under
-                        // flow control)?
-                        await SendAsync(data, cancellationToken)
-                            .ConfigureAwait(false);
-                        break;
-                    case Control control:
-                        await SendAsync(control, cancellationToken)
-                            .ConfigureAwait(false);
-                        break;
-                    default:
-                        throw new InvalidOperationException(
-                            $"[{Id}]: Frame of type {frame.GetType()} is not supported");
+                    switch (frame)
+                    {
+                        case Data data:
+                            // todo: Should we always wait for data frames to be sent before sending
+                            // the next frame (which might be a control frame that are not under
+                            // flow control)?
+                            await SendAsync(data, cancellationToken)
+                                .ConfigureAwait(false);
+                            break;
+                        case Control control:
+                            await SendAsync(control, cancellationToken)
+                                .ConfigureAwait(false);
+                            break;
+                        default:
+                            throw new InvalidOperationException(
+                                $"[{Id}]: Frame of type {frame.GetType()} is not supported");
+                    }
+
+                    sentCompletionSource.SetResult();
+                }
+                catch when (cancellationToken.IsCancellationRequested)
+                {
+                    sentCompletionSource.SetCanceled(cancellationToken);
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    sentCompletionSource.SetException(ex);
+                    throw;
                 }
             }
         }
@@ -240,7 +255,7 @@ namespace Spdy
         private readonly Signaler
             _windowSizeIncreased = new();
 
-        private void TryIncreaseWindowSizeOrCloseSession(
+        private async Task TryIncreaseWindowSizeOrCloseSessionAsync(
             int delta)
         {
             var newWindowSize = Interlocked.Add(ref _windowSize, delta);
@@ -251,10 +266,12 @@ namespace Spdy
             }
             catch (OverflowException)
             {
+                await StopNetworkSenderAsync()
+                    .ConfigureAwait(false);
                 var error =
                     RstStream.FlowControlError(_lastGoodStreamId);
-                _sendingPriorityQueue.Enqueue(SynStream.PriorityLevel.Top,
-                        error);
+                await SendAsync(error, SessionCancellationToken)
+                    .ConfigureAwait(false);
                 _logger.Error(
                     error,
                     "[{SessionId}]: Received payload overflowing the buffer window, cancelling the session",
@@ -318,7 +335,9 @@ namespace Spdy
                 }
 
                 _pingsSent.TryAdd(ping.Id, Stopwatch.StartNew());
-                _sendingPriorityQueue.Enqueue(SynStream.PriorityLevel.Top, ping);
+                _sendingPriorityQueue.Enqueue(
+                    SynStream.PriorityLevel.Top,
+                    ping);
                 break;
             }
         }
@@ -397,7 +416,9 @@ namespace Spdy
                 _logger.Error(
                     error, "[{SessionId}:{StreamId}]: Sending stream error",
                     Id, error.StreamId);
-                _sendingPriorityQueue.Enqueue(SynStream.PriorityLevel.High, error);
+                _sendingPriorityQueue.Enqueue(
+                    SynStream.PriorityLevel.High,
+                    error);
                 return;
             }
 
@@ -549,8 +570,9 @@ namespace Spdy
                     if (windowUpdate
                         .IsConnectionFlowControl)
                     {
-                        TryIncreaseWindowSizeOrCloseSession(
-                                windowUpdate.DeltaWindowSize);
+                        await TryIncreaseWindowSizeOrCloseSessionAsync(
+                                windowUpdate.DeltaWindowSize)
+                            .ConfigureAwait(false);
                         break;
                     }
 

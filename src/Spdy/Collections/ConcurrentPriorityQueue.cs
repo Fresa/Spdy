@@ -11,7 +11,7 @@ namespace Spdy.Collections
     internal sealed class ConcurrentPriorityQueue<T>
     {
         private readonly Dictionary<SynStream.PriorityLevel,
-            ConcurrentQueue<T>> _priorityQueues =
+            ConcurrentQueue<(T, TaskCompletionSource)>> _priorityQueues =
             new(
                 Enum.GetValues(typeof(SynStream.PriorityLevel))
                     .Cast<SynStream.PriorityLevel>()
@@ -19,8 +19,8 @@ namespace Spdy.Collections
                     .Select(
                         priority
                             => new KeyValuePair<SynStream.PriorityLevel,
-                                ConcurrentQueue<T>>(
-                                priority, new ConcurrentQueue<T>())));
+                                ConcurrentQueue<(T, TaskCompletionSource)>>(
+                                priority, new ConcurrentQueue<(T, TaskCompletionSource)>())));
 
         private readonly SemaphoreSlim _itemsAvailable = new(0);
 
@@ -28,13 +28,22 @@ namespace Spdy.Collections
             SynStream.PriorityLevel priority,
             T item)
         {
-            _priorityQueues[priority]
-                .Enqueue(item);
-            _itemsAvailable.Release();
+            SendAsync(priority, item);
         }
 
-        public async Task<T> DequeueAsync(
-            CancellationToken cancellationToken = default)
+        internal Task SendAsync(
+            SynStream.PriorityLevel priority,
+            T item)
+        {
+            var sentCompletionSource = new TaskCompletionSource();
+            _priorityQueues[priority]
+                .Enqueue((item, sentCompletionSource));
+            _itemsAvailable.Release();
+            return sentCompletionSource.Task;
+        }
+
+        public async Task<(T, TaskCompletionSource)> DequeueAsync(
+                CancellationToken cancellationToken = default)
         {
             await _itemsAvailable
                   .WaitAsync(cancellationToken)
