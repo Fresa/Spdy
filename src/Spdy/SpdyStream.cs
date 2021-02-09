@@ -430,11 +430,11 @@ namespace Spdy
                 }
             }
             
-            Task task = Task.CompletedTask;
+            Task task = Task.WhenAll(sendTasks);
             try
             {
-                task = Task.WhenAll(sendTasks);
-                await task;
+                await task
+                    .ConfigureAwait(false);
             }
             catch when (task.IsCanceled)
             {
